@@ -25,18 +25,30 @@ type cacheEntry struct {
 const (
 	topicFanSpeed            = "vallox/fan/speed"
 	topicFanSpeedSet         = "vallox/fan/set"
-	topicTempIncomingIside   = "vallox/temp/incoming/inside"
+	topicTempIncomingInside  = "vallox/temp/incoming/inside"
 	topicTempIncomingOutside = "vallox/temp/incoming/outside"
 	topicTempOutgoingInside  = "vallox/temp/outgoing/inside"
 	topicTempOutgoingOutside = "vallox/temp/outgoing/outside"
+	topicLights              = "vallox/lights"
+	topicErrorCode           = "vallox/errorcode"
+	topicTimeBoosting        = "vallox/time/boosting"
+	topicIOPort              = "vallox/misc/ioport"
+	topicFlags2              = "vallox/misc/flags2"
+	topicFlags6              = "vallox/misc/flags6"
 )
 
 var topicMap = map[byte]string{
 	vallox.FanSpeed:            topicFanSpeed,
-	vallox.TempIncomingInside:  topicTempIncomingIside,
+	vallox.TempIncomingInside:  topicTempIncomingInside,
 	vallox.TempIncomingOutside: topicTempIncomingOutside,
 	vallox.TempOutgoingInside:  topicTempOutgoingInside,
 	vallox.TempOutgoingOutside: topicTempOutgoingOutside,
+	vallox.Lights:              topicLights,
+	vallox.ErrorCode:           topicErrorCode,
+        vallox.TimeBoosting:        topicTimeBoosting,
+        vallox.IOPort:              topicIOPort,
+        vallox.Flags2:              topicFlags2,
+        vallox.Flags6:              topicFlags6,
 }
 
 type Config struct {
@@ -114,9 +126,10 @@ func main() {
 }
 
 func handleValloxEvent(valloxDev *vallox.Vallox, e vallox.Event, cache map[byte]cacheEntry, mqtt mqttClient.Client) {
-	if !valloxDev.ForMe(e) {
-		return // Ignore values not addressed for me
-	}
+	//if !valloxDev.ForMe(e) {
+
+	//	return // Ignore values not addressed for me
+	//}
 
 	if val, ok := cache[e.Register]; !ok {
 		// First time we receive this value, send Home Assistant discovery
@@ -310,9 +323,15 @@ func announceMeToMqttDiscovery(mqtt mqttClient.Client, cache map[byte]cacheEntry
 	publishDiscovery(mqtt, "vallox_fan_speed", "Vallox speed", topicFanSpeed)
 	publishDiscoveryFanSelect(mqtt, "vallox_fan_select", "Vallox speed select", topicFanSpeed)
 	publishDiscovery(mqtt, "vallox_temp_incoming_outside", "Vallox outdoor temperature", topicTempIncomingOutside)
-	publishDiscovery(mqtt, "vallox_temp_incoming_insise", "Vallox incoming temperature", topicTempIncomingIside)
+	publishDiscovery(mqtt, "vallox_temp_incoming_insise", "Vallox incoming temperature", topicTempIncomingInside)
 	publishDiscovery(mqtt, "vallox_temp_outgoing_inside", "Vallox interior temperature", topicTempOutgoingInside)
 	publishDiscovery(mqtt, "vallox_temp_outgoing_outside", "Vallox exhaust temperature", topicTempOutgoingOutside)
+	publishDiscovery(mqtt, "vallox_lights", "Vallox indicator lights", topicLights)
+	publishDiscovery(mqtt, "vallox_errorcode", "Vallox latest error code", topicErrorCode)
+	publishDiscovery(mqtt, "vallox_time_boosting", "Vallox boosting time left", topicTimeBoosting)
+	publishDiscovery(mqtt, "vallox_misc_ioport", "Vallox IO port status", topicIOPort)
+	publishDiscovery(mqtt, "vallox_misc_flags2", "Vallox Flags 2", topicFlags2)
+	publishDiscovery(mqtt, "vallox_misc_flags6", "Vallox Flags 6", topicFlags6)
 
 	for reg := range cache {
 		announceRawData(mqtt, reg)
