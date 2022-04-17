@@ -83,9 +83,28 @@ export MQTT_URL=tcp://localhost:8883
 - homeassistant/status subscribe to HA status changes
 - vallox/fan/set subscribe to fan speed commands
 - vallox/fan/speed publish fan speeds
-- vallox/temperature_incoming_outside Outdoor temperature
-- vallox/temperature_incoming_inside Incoming temperature
-- vallox/temperature_outgoing_inside Inside temperature
-- vallox/temperature_outgoing_outside Exhaust temperature
+- vallox/temp/incoming/outside Outdoor temperature
+- vallox/temp/incoming/inside Incoming temperature
+- vallox/temp/outgoing/inside Inside temperature
+- vallox/temp/outgoing/outside Exhaust temperature
+- vallox/lights Indicator lights as seen on the panel (see below)
+- vallox/misc/flags6 6th register flags (see below)
 - vallox/raw/# Raw register value changes (if raw values are enabled)
 
+### Indicator lights
+Indicator lights are a bitmask where every bit 1 indicates that certain light on the control panel is lighted.
+ - bit 0 (LSB): Power light
+ - bit 1: CO2 sensor light
+ - bit 2: RH (humidity) sensor light
+ - bit 3: Post-heating light
+ - bits 4-6: N/A
+ - bit 7 (MSB): N/A
+
+### 6th register flags
+This register contains miscellancelous flags that are usefull for monitoring.
+ - bit 0 (LSB): N/A
+ - bits 1-3: N/A
+ - bit 4: Remote control enabled
+ - bit 5: N/A
+ - bit 6: Fireplace mode (or boosting mode?) on
+ - bit 7 (MSB): N/A
