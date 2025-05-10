@@ -69,7 +69,7 @@ Application is configure with environment variables
 | ENABLE_WRITE    |          | false   | enable sending commands/writing to bus, true/false |
 | SPEED_MIN       |          | 1       | minimum speed for the device, between 1-8.  Used for HA discovery to have correct min value in UI |
 | ENABLE_RAW      |          | false   | enable sending raw events to mqtt, otherwise only known changes are sent |
-| ENABLE_MONITOR  |          | false   | enable monitor mode which accepts messages addressed to any device. Useful when ENABLE_WRITE = false |
+| ENABLE_MONITOR  |          | false   | enable monitor mode which accepts messages addressed to any device. May be useful when ENABLE_WRITE = false |
 | OBJECT_ID       |          | true    | Send object_id with HA Auto Discovery for HA entity names |
 | NEW_PROTOCOL    |          | false   | Use different registers for newer devices |
 
@@ -186,5 +186,4 @@ This register contains I/O port (register 08H) status
  - bit 4: Pre-heating (0 = off, 1 = on)
  - bit 5: Exhaust fan status (0 = on, 1 = off)
  - bit 6: Fireplace/boost switch (0 = open, 1 = closed)
- - bit 6: Fireplace mode (or boosting mode?) on
  - bit 7 (MSB): N/A
