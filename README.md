@@ -124,6 +124,8 @@ If DEVICE_ID is specified it is used as mqtt base topic, for example if DEVICE_I
 - vallox1/temperature_outgoing_outside Exhaust temperature
 - vallox1/raw/# Raw register value changes (if raw values are enabled)
 
+And so on.
+
 ## Home Assistant sensors
 
 If mqtt auto discovery is used and OBJECT_ID is true (default) Home Assistant sensors are created based on DEVICE_ID like:
@@ -135,6 +137,8 @@ If mqtt auto discovery is used and OBJECT_ID is true (default) Home Assistant se
 - sensor.vallox_temp_outgoing_outside
 
 Without OBJECT_ID sensor ids are automatically created by HA based on sensor names
+
+## Additional information
 
 ### Error codes
 
