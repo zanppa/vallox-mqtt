@@ -100,10 +100,18 @@ With default configuration:
 - homeassistant/status subscribe to HA status changes
 - vallox/fan/set subscribe to fan speed commands
 - vallox/fan/speed publish fan speeds
-- vallox/temperature_incoming_outside Outdoor temperature
-- vallox/temperature_incoming_inside Incoming temperature
-- vallox/temperature_outgoing_inside Inside temperature
-- vallox/temperature_outgoing_outside Exhaust temperature
+- vallox/temp/incoming/outside Outdoor temperature
+- vallox/temp/incoming/inside Incoming temperature
+- vallox/temp/outgoing/inside Inside temperature
+- vallox/temp/outgoing/outside Exhaust temperature
+- vallox/temp/insidetarget Post-heating target temperature
+- vallox/temp/hexbypass Heat exchanger by-pass temperature (outside)
+- vallox/temp/postheating Post-heating setpoint temperature
+- vallox/lights Indicator lights as seen on the panel (see below)
+- vallox/errorcode Active error code (see below)
+- vallox/misc/ioport I/O port status (see below)
+- vallox/misc/flags2 2nd register flags (see below)
+- vallox/misc/flags6 6th register flags (see below)
 - vallox/raw/# Raw register value changes (if raw values are enabled)
 
 If DEVICE_ID is specified it is used as mqtt base topic, for example if DEVICE_ID=vallox1 then topics would be:
@@ -126,3 +134,56 @@ If mqtt auto discovery is used and OBJECT_ID is true (default) Home Assistant se
 - sensor.vallox_temp_outgoing_outside
 
 Without OBJECT_ID sensor ids are automatically created by HA based on sensor names
+
+### Error codes
+
+Possible error codes are listed here.
+ - 05H: Incoming (inside) air temperature sensor fault
+ - 06H: CO2 alarm
+ - 07H: Outdoor (incoming) air temperature sensor fault
+ - 08H: Inside (exhaust) air temperature sensor fault
+ - 09H: Water coil freezing risk warning
+ - 0AH: Exhaust (outside) air temperature sensor fault
+
+### Indicator lights
+
+Indicator lights are a bitmask where every bit 1 indicates that certain light on the control panel is lighted.
+ - bit 0 (LSB): Power light
+ - bit 1: CO2 sensor light
+ - bit 2: RH (humidity) sensor light
+ - bit 3: Post-heating light
+ - bits 4-6: N/A
+ - bit 7 (MSB): N/A
+
+### 2nd register flags
+
+This register contains miscellancelous flags that are usefull for monitoring.
+ - bit 0 (LSB): Speed up request from CO2 sensor
+ - bit 1: Speed down request from CO2 sensor
+ - bit 2: Speed down request from RH% sensor
+ - bit 3: Speed down request by switch
+ - bit 6: CO2 alarm
+ - bit 7 (MSB): Heat exchanger risk of freezing alarm
+
+### 6th register flags
+
+This register contains miscellancelous flags that are usefull for monitoring.
+ - bit 0 (LSB): N/A
+ - bits 1-3: N/A
+ - bit 4: Remote control enabled
+ - bit 5: N/A
+ - bit 6: Fireplace mode (or boosting mode?) on
+ - bit 7 (MSB): N/A
+
+### I/O port
+
+This register contains I/O port (register 08H) status
+ - bit 0 (LSB): N/A
+ - bit 1: Hex bypass state (0 = winter, 1 = summer)
+ - bit 2: Error relay state (0 = open, 1 = closed)
+ - bit 3: Input fan status (0 = on, 1 = off)
+ - bit 4: Pre-heating (0 = off, 1 = on)
+ - bit 5: Exhaust fan status (0 = on, 1 = off)
+ - bit 6: Fireplace/boost switch (0 = open, 1 = closed)
+ - bit 6: Fireplace mode (or boosting mode?) on
+ - bit 7 (MSB): N/A
