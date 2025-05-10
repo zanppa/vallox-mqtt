@@ -29,6 +29,8 @@ const (
 	topicTempIncomingOutside = "vallox/temp/incoming/outside"
 	topicTempOutgoingInside  = "vallox/temp/outgoing/inside"
 	topicTempOutgoingOutside = "vallox/temp/outgoing/outside"
+	topicTempHexBypass       = "vallox/temp/hexbypass"
+	topicTempPostHeating	 = "vallox/temp/postheating"
 	topicLights              = "vallox/lights"
 	topicErrorCode           = "vallox/errorcode"
 	topicTimeBoosting        = "vallox/time/boosting"
@@ -43,6 +45,8 @@ var topicMap = map[byte]string{
 	vallox.TempIncomingOutside: topicTempIncomingOutside,
 	vallox.TempOutgoingInside:  topicTempOutgoingInside,
 	vallox.TempOutgoingOutside: topicTempOutgoingOutside,
+	vallox.TempHexBypass:       topicTempHexBypass,
+	vallox.TempPostHeating:     topicTempPostHeating,
 	vallox.Lights:              topicLights,
 	vallox.ErrorCode:           topicErrorCode,
         vallox.TimeBoosting:        topicTimeBoosting,
@@ -61,6 +65,7 @@ type Config struct {
 	EnableWrite  bool   `envconfig:"enable_write" default:"false"`
 	SpeedMin     byte   `envconfig:"speed_min" default:"1"`
 	EnableRaw    bool   `envconfig:"enable_raw" default:"false"`
+	Monitor      bool   `envconfig:"enable_monitor" default:"false"`
 }
 
 var (
@@ -126,10 +131,11 @@ func main() {
 }
 
 func handleValloxEvent(valloxDev *vallox.Vallox, e vallox.Event, cache map[byte]cacheEntry, mqtt mqttClient.Client) {
-	//if !valloxDev.ForMe(e) {
+	//logDebug.Printf("Event from 0x%x to 0x%x: (0x%x, 0x%x)\n", e.Source, e.Destination, e.Register, e.RawValue);
 
-	//	return // Ignore values not addressed for me
-	//}
+	if !config.Monitor && !valloxDev.ForMe(e) {
+		return // Ignore values not addressed for me
+	}
 
 	if val, ok := cache[e.Register]; !ok {
 		// First time we receive this value, send Home Assistant discovery
@@ -326,6 +332,8 @@ func announceMeToMqttDiscovery(mqtt mqttClient.Client, cache map[byte]cacheEntry
 	publishDiscovery(mqtt, "vallox_temp_incoming_insise", "Vallox incoming temperature", topicTempIncomingInside)
 	publishDiscovery(mqtt, "vallox_temp_outgoing_inside", "Vallox interior temperature", topicTempOutgoingInside)
 	publishDiscovery(mqtt, "vallox_temp_outgoing_outside", "Vallox exhaust temperature", topicTempOutgoingOutside)
+	publishDiscovery(mqtt, "vallox_temp_hexbypass", "Vallox heat exchanger bypass temperature", topicTempHexBypass)
+	publishDiscovery(mqtt, "vallox_temp_postheating", "Vallox post heating target temperature", topicTempPostHeating)
 	publishDiscovery(mqtt, "vallox_lights", "Vallox indicator lights", topicLights)
 	publishDiscovery(mqtt, "vallox_errorcode", "Vallox latest error code", topicErrorCode)
 	publishDiscovery(mqtt, "vallox_time_boosting", "Vallox boosting time left", topicTimeBoosting)
